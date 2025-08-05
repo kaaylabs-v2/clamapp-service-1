@@ -1,6 +1,12 @@
 # Use Node.js 22 base image
 FROM node:22.0.0
 
+# Install ODBC libraries and development headers
+RUN apt-get update && apt-get install -y \
+    unixodbc \
+    unixodbc-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /opt/
 
