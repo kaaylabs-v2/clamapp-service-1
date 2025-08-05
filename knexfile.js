@@ -4,11 +4,11 @@ module.exports = {
     development: {
     client: 'mssql',
     connection: {
-      server: 'localhost',
-      port: 1433,
-      database: 'CALMAPP',
-      user: 'nav',
-      password: 'StrongPassword123!',
+      server: '122.165.127.194',
+      port: 27043,
+      database: 'CLAMAPP_DEV',
+      user: 'Clamapp-db',
+      password: 'Kaay@123',
       options: {
         encrypt: false,
         enableArithAbort: true,
