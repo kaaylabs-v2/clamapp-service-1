@@ -1,0 +1,56 @@
+def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+def BUTTON_STYLE_MAP = ['SUCCESS': 'primary', 'FAILURE': 'danger', 'UNSTABLE': 'danger', 'ABORTED': 'danger']
+
+pipeline {
+  agent any
+
+  stages {
+    stage('build') {
+      steps {
+        echo 'Building a docker image'
+        sh 'sed -i "s/\\r$//" ./scripts/build'
+        sh './scripts/build'
+      }
+    }
+
+    stage('deploy') {
+      steps {
+        echo 'Deployment is in progress'
+        sh 'sed -i "s/\\r$//" ./scripts/deploy'
+        sh './scripts/deploy'
+      }
+    }
+  }
+
+  post {
+    always {
+      script {
+        def author = sh(script: 'git show -s --pretty=%an', returnStdout: true).trim()
+        def commitId = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+        def buildResult = currentBuild.currentResult
+
+        slackSend channel: 'kaaylabs-ci-alerts',
+          attachments: [
+            [
+              color: COLOR_MAP[buildResult],
+              fallback: "View Build Logs",
+              text: "*${buildResult}:* Job `${env.JOB_NAME}`\n" +
+                    "Author Name : ${author}\n" +
+                    "Commit ID   : `${commitId}`\n" +
+                    "Branch Name : ${env.BRANCH_NAME}\n" +
+                    "Build Number: ${env.BUILD_NUMBER}",
+              actions: [
+                [
+                  type: "button",
+                  text: "View Build Logs",
+                  url: "${env.BUILD_URL}",
+                  style: BUTTON_STYLE_MAP[buildResult]
+                ]
+              ]
+            ]
+          ]
+      }
+      cleanWs()
+    }
+  }
+}

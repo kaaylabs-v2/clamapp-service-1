@@ -1,0 +1,32 @@
+
+{
+    "requiresCompatibilities": ["EXTERNAL"],
+    "containerDefinitions": [
+      {
+        "name": "calmapp-service",
+        "image": "891377352857.dkr.ecr.us-east-1.amazonaws.com/calmapp-service:GIT_COMMIT",
+        "memory": 300,
+        "memoryReservation": 200,
+        "cpu": 300,
+        "essential": true,
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "development",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "calmapp-service"
+          }
+        },
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "hostPort": 27037,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    ],
+    "networkMode": "bridge",
+    "family": "calmapp-service",
+    "taskRoleArn": "arn:aws:iam::891377352857:role/ecsanywhererole"
+  }
